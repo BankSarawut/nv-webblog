@@ -26,6 +26,7 @@
             </p>
             <hr>
         </div>
+        <p><button v-on:click = "logout">Logout</button></p>
     </div>
 </div>
 </template>
@@ -47,19 +48,31 @@ export default{
     },
     methods:{
         navigateTo(route){
-            this.$router.push(route);
+            this.$router.push(route)
         },
         async deleteUser(user){
             let result = confirm("Want to delete")
             if(result){
-                try{
-                    await UsersService.delete(user)
-                }catch(error){
-                    console.log(error)
-                }
+              try{
+                  await UsersService.delete(user)
+                  this.refreshData()
+              }catch(error){
+                  console.log(error)
+              }
+
             }
+        },
+        async refreshData(){
+            this.users = (await UsersService.index()).data
+        },
+        logout(){
+            this.$store.dispatch('setToken',null)
+            this.$$store.dispatch('setUser',null)
+            this.$router.push({
+                name:'loogin'
+            })
         }
-    },
+    },         
 };
 
 </script>
